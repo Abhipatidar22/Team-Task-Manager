@@ -10,6 +10,10 @@ This project deploys as **one Railway service** (API + built frontend).
 
 These are pinned in `nixpacks.toml`.
 
+## Node version
+
+This repo includes [.nvmrc](.nvmrc) and the root [package.json](package.json) `engines.node` to keep Railway on a Node version compatible with Vite.
+
 ## Step-by-step
 
 ### 1) Push the code to GitHub
@@ -48,6 +52,7 @@ In your **service** (the Node app) → **Variables**, set:
 
 Optional:
 - `NODE_ENV=production`
+- If Railway still builds with an older Node version, set `NIXPACKS_NODE_VERSION=22.12.0`
 
 ### 5) Deploy
 
