@@ -1,0 +1,29 @@
+{
+  "name": "assignement-ethara",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "workspaces": [
+    "apps/web",
+    "apps/api"
+  ],
+  "main": "index.js",
+  "scripts": {
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "db:reset": "docker compose down -v && docker compose up -d",
+    "dev:web": "npm run dev -w web",
+    "dev:api": "npm run dev -w api",
+    "dev": "concurrently -n api,web -c blue,green \"npm run dev:api\" \"npm run dev:web\"",
+    "build": "npm run prisma:generate -w api && npm run build -w web && npm run build -w api",
+    "start": "npm run prisma:migrate:deploy -w api && npm run start -w api",
+    "postinstall": "npm run prisma:generate -w api"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
