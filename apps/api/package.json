@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc -p tsconfig.json",
-    "start": "npm run prisma:migrate:deploy && node dist/index.js",
+    "start": "sh -c 'if [ -n \"$DATABASE_URL\" ]; then npm run prisma:migrate:deploy; else echo "Skipping prisma migrate: DATABASE_URL not set"; fi' && node dist/index.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy"
