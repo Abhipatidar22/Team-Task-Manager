@@ -18,3 +18,4 @@ apps/api/.env
 # OS
 .DS_Store
 Thumbs.db
+.vercel

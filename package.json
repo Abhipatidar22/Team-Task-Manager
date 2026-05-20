@@ -19,8 +19,7 @@
     "dev:api": "npm run dev -w api",
     "dev": "concurrently -n api,web -c blue,green \"npm run dev:api\" \"npm run dev:web\"",
     "build": "npm run prisma:generate -w api && npm run build -w web && npm run build -w api",
-    "start": "npm run start -w api",
-    "postinstall": "npm run prisma:generate -w api"
+    "start": "npm run start -w api"
   },
   "devDependencies": {
     "concurrently": "^9.2.0"
