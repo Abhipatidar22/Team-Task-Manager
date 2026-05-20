@@ -105,6 +105,15 @@ This repo is now configured for Vercel.
 
 Vercel will build the frontend and deploy the API route under `/api`.
 
+### GitHub Actions
+
+A GitHub Actions workflow has been added at `.github/workflows/deploy-vercel.yml` to deploy to Vercel automatically on push to `main`.
+
+You need to add these repository secrets in GitHub:
+- `VERCEL_TOKEN`
+- `VERCEL_ORG_ID`
+- `VERCEL_PROJECT_ID`
+
 > Note: Vercel serverless functions do not automatically run Prisma migrations. Run the database migration locally or from a CI job before using the app:
 >
 > ```bash
