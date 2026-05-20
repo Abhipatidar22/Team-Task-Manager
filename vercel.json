@@ -1,0 +1,19 @@
+{
+  "version": 3,
+  "builds": [
+    {
+      "src": "apps/web/package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "dist" }
+    },
+    {
+      "src": "api/index.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/index.ts" },
+    { "src": "/(.*\\.(js|css|png|svg|ico|json|txt|woff2?|woff|map))", "dest": "/apps/web/dist/$1" },
+    { "src": "/(.*)", "dest": "/apps/web/dist/index.html" }
+  ]
+}

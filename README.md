@@ -24,16 +24,23 @@ Create `apps/api/.env` (copy from `apps/api/.env.example`) and set:
 - `DATABASE_URL`
 - `JWT_SECRET`
 
+For local development, use PostgreSQL via Docker or a hosted PostgreSQL database.
+
+```bash
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/team_task_manager?schema=public"
+JWT_SECRET="your-secret"
+```
+
 ### 3) Migrate DB
 
-Start a local Postgres using Docker (recommended):
+If using Postgres, start a local Postgres using Docker (recommended):
 
 ```bash
 npm run db:up
 ```
 
-If you don't have Docker, you can also use a hosted Postgres (e.g., Railway Postgres):
-- Create a Railway Postgres database
+If you don't have Docker, you can also use a hosted PostgreSQL database:
+- Create a hosted Postgres database
 - Copy its connection string into `apps/api/.env` as `DATABASE_URL`
 
 Then run the migration:
@@ -78,25 +85,31 @@ Base path: `/api`
 
 - `GET /dashboard`
 
-## Railway deployment (mandatory)
+## Vercel deployment
 
-This repo is Railway-friendly as a single service:
+This repo is now configured for Vercel.
 
-- `npm run build` builds the web app and the API
-- `npm start` runs `prisma migrate deploy` and starts the API
-- The API serves the built frontend from `apps/web/dist` when present
+- The frontend is built from `apps/web`
+- The API runs as a Vercel Node function from `api/index.ts`
+- The app still needs an external PostgreSQL database
 
 ### Steps
 
 1. Push this repo to GitHub.
-2. In Railway: **New Project → Deploy from GitHub repo**.
-3. Add a PostgreSQL database (Railway plugin) and copy its connection string.
-4. In the Railway service → Variables, set:
-   - `DATABASE_URL` (from the Railway Postgres plugin)
-   - `JWT_SECRET` (your own secret)
-5. Deploy. Railway will run `npm install`, `npm run build`, then `npm start`.
+2. In Vercel: create a new project from your GitHub repo.
+3. Set environment variables in Vercel:
+   - `DATABASE_URL` = your Postgres connection string
+   - `JWT_SECRET` = a long random secret
+   - `NODE_ENV=production` (optional)
+4. Deploy.
 
-Open the deployed URL and you should see the UI.
+Vercel will build the frontend and deploy the API route under `/api`.
+
+> Note: Vercel serverless functions do not automatically run Prisma migrations. Run the database migration locally or from a CI job before using the app:
+>
+> ```bash
+> npx prisma migrate deploy -w apps/api
+> ```
 
 ## Roles
 
