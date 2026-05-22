@@ -1,38 +1,57 @@
 import "dotenv/config";
 import cors from "cors";
 import express from "express";
+import helmet from "helmet";
+import compression from "compression";
 import fs from "fs";
 import path from "path";
 import apiRouter from "./routes";
-import { env } from "./env";
 import { errorHandler, notFound } from "./utils/http";
 
 const app = express();
 
-app.use(express.json());
+app.use(helmet());
+app.use(compression());
 
-if (env.CORS_ORIGIN) {
-  app.use(
-    cors({
-      origin: env.CORS_ORIGIN,
-    }),
-  );
-}
+app.use(express.json({
+  limit: "1mb",
+}));
 
+app.use(cors({
+  origin: true,
+  credentials: true,
+}));
+
+// Health check
 app.get("/health", (_req, res) => {
   res.json({ ok: true });
 });
 
+// API routes
 app.use("/api", apiRouter);
 
-const webDistPath = path.resolve(__dirname, "../../web/dist");
+// Frontend serving
+const webDistPath = path.resolve(
+  process.cwd(),
+  "../web/dist"
+);
+
+console.log("Frontend path:", webDistPath);
+console.log("Frontend exists:", fs.existsSync(webDistPath));
+
 if (fs.existsSync(webDistPath)) {
   app.use(express.static(webDistPath));
-  app.get(/^\/(?!api).*/, (_req, res) => {
+
+  app.get("/", (_req, res) => {
+    res.sendFile(path.join(webDistPath, "index.html"));
+  });
+
+  app.use((_req, res) => {
     res.sendFile(path.join(webDistPath, "index.html"));
   });
 }
 
+// Error handlers
 app.use(notFound);
 app.use(errorHandler);
 

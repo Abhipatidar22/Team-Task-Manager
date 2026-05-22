@@ -85,39 +85,41 @@ Base path: `/api`
 
 - `GET /dashboard`
 
-## Vercel deployment
+## Deployment
 
-This repo is now configured for Vercel.
+This repo is ready for deployment on Railway or any Node host that supports `npm install` and `npm start`.
 
-- The frontend is built from `apps/web`
-- The API runs as a Vercel Node function from `api/index.ts`
-- The app still needs an external PostgreSQL database
+### Railway deployment
 
-### Steps
-
-1. Push this repo to GitHub.
-2. In Vercel: create a new project from your GitHub repo.
-3. Set environment variables in Vercel:
+1. Push this repo to your Git provider.
+2. In Railway, create a new project and connect the repository.
+3. Set these environment variables in Railway:
    - `DATABASE_URL` = your Postgres connection string
    - `JWT_SECRET` = a long random secret
-   - `NODE_ENV=production` (optional)
-4. Deploy.
+   - `CORS_ORIGIN` = optional, the frontend origin if using CORS
+   - `PORT` = optional (defaults to `3000`)
+4. Set the build command to:
 
-Vercel will build the frontend and deploy the API route under `/api`.
+```bash
+npm run build
+```
 
-### GitHub Actions
+5. Set the start command to:
 
-A GitHub Actions workflow has been added at `.github/workflows/deploy-vercel.yml` to deploy to Vercel automatically on push to `main`.
+```bash
+npm start
+```
 
-You need to add these repository secrets in GitHub:
-- `VERCEL_TOKEN`
-- `VERCEL_ORG_ID`
-- `VERCEL_PROJECT_ID`
+### Production notes
 
-> Note: Vercel serverless functions do not automatically run Prisma migrations. Run the database migration locally or from a CI job before using the app:
+- The frontend is built from `apps/web`.
+- The backend runs from `apps/api` and serves the frontend from `web/dist` when built.
+- Railway will host the Node server and connect it to your PostgreSQL database.
+
+> Note: Prisma migrations must be deployed before the app is used in production:
 >
 > ```bash
-> npx prisma migrate deploy -w apps/api
+> npm run prisma:migrate:deploy -w apps/api
 > ```
 
 ## Roles

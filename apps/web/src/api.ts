@@ -1,4 +1,8 @@
-const API_BASE = import.meta.env.VITE_API_BASE || "/api";
+const API_BASE =
+  import.meta.env.VITE_API_BASE ||
+  (import.meta.env.PROD
+    ? "/api"
+    : "http://localhost:3000/api");
 
 export function getToken() {
   return localStorage.getItem("ttm_token");
@@ -9,6 +13,7 @@ export function setToken(token: string | null) {
     localStorage.removeItem("ttm_token");
     return;
   }
+
   localStorage.setItem("ttm_token", token);
 }
 
@@ -18,6 +23,7 @@ export async function api<T>(
   token: string | null = getToken(),
 ): Promise<T> {
   const headers = new Headers(options.headers);
+
   headers.set("accept", "application/json");
 
   if (options.body && !headers.has("content-type")) {
@@ -33,17 +39,13 @@ export async function api<T>(
     headers,
   });
 
-  const data = await res.json().catch(() => null);
   if (!res.ok) {
-    const rawError = data?.error;
-    const message =
-      typeof rawError === "string"
-        ? rawError
-        : rawError
-        ? JSON.stringify(rawError)
-        : `Request failed (${res.status})`;
-    throw new Error(message);
+    const error = await res.json().catch(() => ({
+      message: "Something went wrong",
+    }));
+
+    throw new Error(error.message || "API request failed");
   }
 
-  return data as T;
+  return res.json();
 }
